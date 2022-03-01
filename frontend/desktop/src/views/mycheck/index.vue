@@ -38,7 +38,7 @@
                 @page-limit-change="handleChangeLimit($event)"
                 :data="tableData"
             >
-                <bk-table-column label="序号" prop="award_name"></bk-table-column>
+                <bk-table-column label="序号" type="index"></bk-table-column>
                 <bk-table-column label="奖项名称">
                     <template slot-scope="props">
                         <!-- 建议可跳转 但是这个依赖于获取详情后的页面信息接口，暂时没有 -->
@@ -47,14 +47,29 @@
                 </bk-table-column>
                 <bk-table-column label="申请时间" prop="application_time"></bk-table-column>
                 <bk-table-column label="申请理由" prop="application_reason"></bk-table-column>
+                <bk-table-column label="申请附件">
+                    <template slot-scope="props">
+                        <bk-link v-for="file in props.row['application_attachments']"
+                            :key="file['url']"
+                            theme="primary"
+                            @click="handleGetFile(file['path'])"
+                        >
+                            {{ file['name'] }}
+                        </bk-link>
+                    </template>
+                </bk-table-column>
                 <bk-table-column label="申请人">
                     <template slot-scope="props">
-                        <span>{{props.row['application_users']}}</span>
+                        <span v-for="(username,applicationUser) in props.row['application_users'] || []"
+                            :key="username"
+                        >
+                            {{ applicationUser }}({{ username }})
+                        </span>
                     </template>
                 </bk-table-column>
                 <bk-table-column label="当前审批轮次">
                     <template slot-scope="props">
-                        第 {{props.row['approval_turn']}} 轮
+                        第 {{ props.row['approval_turn'] }} 轮
                     </template>
                 </bk-table-column>
 
@@ -63,19 +78,41 @@
                         <bk-button :class="['mr10',props.row['approval_state_en']]"
                             theme="primary"
                             text
-                            @click="toCheck(props.row)"
+                            @click="toCheck(props.row,1,'通过该申请')"
                         >
+                            通过
+                        </bk-button>
+                        <bk-button :class="['mr10',props.row['approval_state_en']]"
+                            theme="primary"
+                            text
+                            @click="toCheck(props.row,0,'打回该申请')"
+                        >
+                            审批
                         </bk-button>
                     </template>
                 </bk-table-column>
             </bk-table>
         </div>
+        <bk-dialog v-model="approvalForm.editing"
+            :title="approvalForm.tips"
+            :header-position="'left'"
+            :confirm-fn="() => handleConfirmToSubmitDelApproval(approvalForm)"
+        >
+            <bk-input class="mb15"
+                :placeholder="'请输入评语'"
+                :type="'textarea'"
+                :rows="5"
+                v-model="approvalForm.approval_text"
+            >
+            </bk-input>
+        </bk-dialog>
     </div>
 </template>
 
 <script>
-    import { getApproval } from '@/api/service/apply-service'
+    import { getApproval, postApproval } from '@/api/service/apply-service'
     import { AWARD_APPROVAL_STATE_EN_MAP, AWARD_APPROVAL_STATE_MAP, NOT_APPLY } from '@/constants'
+
     export default {
         data () {
             return {
@@ -94,7 +131,15 @@
                     award_approval_state_controller: {
                         [NOT_APPLY]: '待审批'
                     }
+                },
+                approvalForm: {
+                    tips: '',
+                    editing: false,
+                    id: null,
+                    action: null,
+                    approval_text: ''
                 }
+
             }
         },
         computed: {
@@ -102,6 +147,7 @@
                 return self.remoteData?.map(item => {
                     return {
                         ...item,
+                        ...item['award_info'],
                         approval_state_cn: AWARD_APPROVAL_STATE_MAP[item['approval_state']],
                         approval_state_en: AWARD_APPROVAL_STATE_EN_MAP[item['approval_state']]
                     }
@@ -136,11 +182,37 @@
                     this.remoteData = res.data['results']
                     this.pagination = res.data['count']
                 })
+            },
+            toCheck (curInfo, action, tips) {
+                console.log(curInfo)
+                this.approvalForm.id = curInfo['id']
+                this.approvalForm.editing = true
+                this.approvalForm.action = action
+                this.approvalForm.tips = tips
+                this.approvalForm.approval_text = ''
+            },
+            handleGetFile (url) {
+                this.$http.get('/media/' + url).then(_ => {
+                    console.log(_)
+                })
+            },
+            /**
+             * 提交审核结果
+             * */
+            async handleConfirmToSubmitDelApproval (form) {
+                return new Promise(resolve => {
+                    postApproval(form).then(_ => {
+                        this.messageSuccess('审核成功')
+                        this.handleGetPageData()
+                        this.approvalForm.editing = false
+                    })
+                })
             }
+
         }
     }
 </script>
 
 <style scoped>
-    @import './index.css';
+@import './index.css';
 </style>

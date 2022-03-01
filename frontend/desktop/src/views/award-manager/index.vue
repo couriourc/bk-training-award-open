@@ -128,12 +128,11 @@
         <!-- 表格按钮区域 -->
         <bk-table class="mt15"
             :data="tableData"
-            :size="size"
+            :size="'small'"
             :pagination="pagination"
             @page-change="handleCurrentChange($event)"
             @page-limit-change="handlePageSizeChange($event)"
             @selection-change="handleSetSelectData"
-            :virtual-render="true"
         >
             <bk-table-column type="selection" width="60"></bk-table-column>
             <bk-table-column v-for="(rowLabel,rowProp) in tableSettings"
@@ -222,8 +221,6 @@
         data () {
             return {
                 // S 控制信息区
-                // 表格尺寸
-                size: 'small',
                 // loading 状态
                 loading: {
                     newAwardFormLoading: false
@@ -355,6 +352,7 @@
             confirmDelAward (rawData) {
                 console.log(rawData)
                 return deleteAward({ awardId: rawData['id'] }).then(_ => {
+                    this.handleInit()
                     this.messageSuccess('删除成功')
                 })
             },
