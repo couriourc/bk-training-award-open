@@ -52,7 +52,7 @@
                         <bk-link v-for="file in props.row['application_attachments']"
                             :key="file['url']"
                             theme="primary"
-                            @click="handleGetFile(file['path'])"
+                            :href="'media/' + file['path']"
                         >
                             {{ file['name'] }}
                         </bk-link>
@@ -67,11 +67,11 @@
                         </span>
                     </template>
                 </bk-table-column>
-                <bk-table-column label="当前审批轮次">
-                    <template slot-scope="props">
-                        第 {{ props.row['approval_turn'] }} 轮
-                    </template>
-                </bk-table-column>
+                <!--                <bk-table-column label="当前审批轮次">-->
+                <!--                    <template slot-scope="props">-->
+                <!--                        第 {{ props.row['approval_turn'] + 1 }} 轮-->
+                <!--                    </template>-->
+                <!--                </bk-table-column>-->
 
                 <bk-table-column label="审批状态" width="150">
                     <template slot-scope="props">
@@ -190,11 +190,6 @@
                 this.approvalForm.action = action
                 this.approvalForm.tips = tips
                 this.approvalForm.approval_text = ''
-            },
-            handleGetFile (url) {
-                this.$http.get('/media/' + url).then(_ => {
-                    console.log(_)
-                })
             },
             /**
              * 提交审核结果

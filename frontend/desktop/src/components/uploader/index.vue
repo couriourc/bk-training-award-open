@@ -43,7 +43,7 @@
             },
             url: {
                 type: String,
-                default: () => '/bk_api/upload/'
+                default: () => '/upload/'
             }
         },
         data () {
