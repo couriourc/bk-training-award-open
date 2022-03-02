@@ -38,24 +38,15 @@
                 @page-limit-change="handleChangeLimit($event)"
                 :data="tableData"
             >
-                <bk-table-column label="序号" type="index"></bk-table-column>
+                <bk-table-column label="序号"
+                    type="index"
+                    width="60"
+                    fixed="left"
+                ></bk-table-column>
                 <bk-table-column label="奖项名称">
                     <template slot-scope="props">
                         <!-- 建议可跳转 但是这个依赖于获取详情后的页面信息接口，暂时没有 -->
                         <span>{{ props.row['award_name'] }}</span>
-                    </template>
-                </bk-table-column>
-                <bk-table-column label="申请时间" prop="application_time"></bk-table-column>
-                <bk-table-column label="申请理由" prop="application_reason"></bk-table-column>
-                <bk-table-column label="申请附件">
-                    <template slot-scope="props">
-                        <bk-link v-for="file in props.row['application_attachments']"
-                            :key="file['url']"
-                            theme="primary"
-                            :href="'media/' + file['path']"
-                        >
-                            {{ file['name'] }}
-                        </bk-link>
                     </template>
                 </bk-table-column>
                 <bk-table-column label="申请人">
@@ -67,37 +58,62 @@
                         </span>
                     </template>
                 </bk-table-column>
-                <!--                <bk-table-column label="当前审批轮次">-->
-                <!--                    <template slot-scope="props">-->
-                <!--                        第 {{ props.row['approval_turn'] + 1 }} 轮-->
-                <!--                    </template>-->
-                <!--                </bk-table-column>-->
+                <bk-table-column label="申请时间" prop="application_time"></bk-table-column>
+                <bk-table-column label="申请理由" prop="application_reason"></bk-table-column>
+                <bk-table-column label="申请附件">
+                    <template slot-scope="props">
+                        <bk-link v-for="file in props.row['application_attachments']"
+                            :key="file['url']"
+                            theme="primary"
+                            :href="file['path']"
+                            class="mr10 f12"
+                        >
+                            {{ file['name'] }}
+                        </bk-link>
+                    </template>
+                </bk-table-column>
+                <bk-table-column label="当前审批轮次">
+                    <template slot-scope="props">
+                        第 {{ props.row['approval_turn'] + 1 }} 轮
+                    </template>
+                </bk-table-column>
 
-                <bk-table-column label="审批状态" width="150">
+                <bk-table-column label="审批状态"
+                    width="150"
+                    fixed="right"
+                >
                     <template slot-scope="props">
                         <bk-button :class="['mr10',props.row['approval_state_en']]"
                             theme="primary"
                             text
-                            @click="toCheck(props.row,1,'通过该申请')"
+                            @click="toCheck(props.row,
+                                            config['button_controller_action']['pass'],
+                                            '通过' + props.row['application_users_list'] + '的申请')"
                         >
                             通过
                         </bk-button>
                         <bk-button :class="['mr10',props.row['approval_state_en']]"
                             theme="primary"
                             text
-                            @click="toCheck(props.row,0,'打回该申请')"
+                            @click="toCheck(props.row,
+                                            config['button_controller_action']['no_pass'],
+                                            '退回' + props.row['application_users_list'] + '的申请')"
                         >
-                            审批
+                            打回
                         </bk-button>
                     </template>
                 </bk-table-column>
             </bk-table>
         </div>
         <bk-dialog v-model="approvalForm.editing"
-            :title="approvalForm.tips"
             :header-position="'left'"
             :confirm-fn="() => handleConfirmToSubmitDelApproval(approvalForm)"
         >
+            <template slot="header">
+                <span class="em f16">
+                    {{ approvalForm.tips }}
+                </span>
+            </template>
             <bk-input class="mb15"
                 :placeholder="'请输入评语'"
                 :type="'textarea'"
@@ -112,6 +128,7 @@
 <script>
     import { getApproval, postApproval } from '@/api/service/apply-service'
     import { AWARD_APPROVAL_STATE_EN_MAP, AWARD_APPROVAL_STATE_MAP, NOT_APPLY } from '@/constants'
+    import moment from 'moment'
 
     export default {
         data () {
@@ -130,6 +147,10 @@
                 config: {
                     award_approval_state_controller: {
                         [NOT_APPLY]: '待审批'
+                    },
+                    button_controller_action: {
+                        pass: 1,
+                        no_pass: 0
                     }
                 },
                 approvalForm: {
@@ -146,8 +167,10 @@
             tableData (self) {
                 return self.remoteData?.map(item => {
                     return {
-                        ...item,
                         ...item['award_info'],
+                        ...item,
+                        application_time: moment(item['application_time']).format('YYYY-MM-DD hh:mm:ss'),
+                        application_users_list: Object.values(item['application_users'] ?? {}),
                         approval_state_cn: AWARD_APPROVAL_STATE_MAP[item['approval_state']],
                         approval_state_en: AWARD_APPROVAL_STATE_EN_MAP[item['approval_state']]
                     }
@@ -197,7 +220,7 @@
             async handleConfirmToSubmitDelApproval (form) {
                 return new Promise(resolve => {
                     postApproval(form).then(_ => {
-                        this.messageSuccess('审核成功')
+                        this.messageSuccess('审批成功')
                         this.handleGetPageData()
                         this.approvalForm.editing = false
                     })

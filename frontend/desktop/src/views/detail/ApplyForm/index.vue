@@ -20,6 +20,7 @@
             <bk-form-item label="申请材料">
                 <Uploader v-model="applyForm['application_attachments']"
                     ext-cls="w-90"
+                    :limit="3"
                 ></Uploader>
             </bk-form-item>
         </bk-form>

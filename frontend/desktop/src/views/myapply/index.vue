@@ -7,15 +7,14 @@
             @page-limit-change="handleLimitChange($event)"
             v-bkloading="{ isLoading: isLoading }"
         >
-            <bk-table-column label="序号" type="index"
+            <bk-table-column label="序号"
+                type="index"
                 width="80"
             ></bk-table-column>
             <bk-table-column label="奖项名称" prop="award_name"></bk-table-column>
             <bk-table-column label="申请时间" prop="application_time"></bk-table-column>
             <bk-table-column label="申请原因"
                 prop="application_reason"
-                :align="'center'"
-                :header-align="'center'"
             >
                 <template slot-scope="props">
                     <span v-bk-overflow-tips="{ content: props.row['application_reason'] }">
@@ -33,7 +32,9 @@
                     </span>
                 </template>
             </bk-table-column>
-            <bk-table-column label="操作" fixed="right">
+            <bk-table-column label="操作"
+                fixed="right"
+            >
                 <template slot-scope="props">
                     <bk-popconfirm
                         :title="'确认撤销申请该奖项（' + props.row['award_name'] + '）？'"
@@ -98,18 +99,16 @@
                             'button-need-pop-confirm': true
                         },
                         [REVIEW_PASSED]: {
-                            'button-title': '--',
+                            'button-title': '——',
                             'disabled': true
                         },
                         [REVIEW_NOT_PASSED]: {
                             'button-title': '重新申请',
                             'button-func': this.handleToApply
-
                         },
                         [DRAFT]: {
                             'button-title': '发起申请',
                             'button-func': this.handleToApply
-
                         }
                     }
                 }
@@ -120,6 +119,7 @@
                 get (self) {
                     return self.remoteData?.map?.(rawData => {
                         return {
+                            ...rawData['award_info'],
                             ...rawData,
                             approval_state_cn: APPLY_APPROVAL_STATE_MAP[rawData['approval_state']],
                             approval_state_en: APPLY_APPROVAL_STATE_EN_MAP[rawData['approval_state']]

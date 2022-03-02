@@ -39,14 +39,19 @@
         computed: {
             historyAwardList (self) {
                 return self.historyAwardListRemoteData?.map?.(item => {
+                    console.log(item)
                     return {
-                        ...item
+                        ...item['award_info'],
+                        ...item,
+                        approval_state_en: AWARD_APPROVAL_STATE_EN_MAP[item['approval_state']],
+                        approval_state_cn: AWARD_APPROVAL_STATE_MAP[item['approval_state']]
                     }
                 }) ?? []
             },
             availableAwardList (self) {
                 return self.availableAwardListRemoteData?.map?.(item => {
                     return {
+                        ...item['award_info'],
                         ...item,
                         approval_state_en: AWARD_APPROVAL_STATE_EN_MAP[item['approval_state']],
                         approval_state_cn: AWARD_APPROVAL_STATE_MAP[item['approval_state']]
@@ -81,13 +86,13 @@
              * 请求区域开始
              * */
             handleGetAvailableAwards () {
-                return getAvailableAwards(1, 5).then(res => {
+                return getAvailableAwards(1, 4).then(res => {
                     this.availableAwardListRemoteData = res['data']['data']
                     return res
                 })
             },
             handleGetApplyedAwards () {
-                return getAppliedAwards(1, 5).then(res => {
+                return getAppliedAwards(1, 4).then(res => {
                     console.log(res)
                     this.historyAwardListRemoteData = res['data']['data']
                     return res
@@ -107,12 +112,11 @@
   @mixin scroller 4px #e6e9ea;
 
   .available-bar {
+    @mixin scroller 2px #e6e9ea;
     display: flex;
     flex-wrap: wrap;
-    gap: 24px;
     width: inherit;
     overflow-x: scroll;
-    @mixin scroller 2px #e6e9ea;
 
   }
 }
