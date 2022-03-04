@@ -16,7 +16,7 @@ class AwardsSerializers(serializers.Serializer):
     award_department_fullname = serializers.CharField()
     award_reviewers = serializers.ListField()
     award_consultant = serializers.CharField()
-    award_image = serializers.CharField(required=False, read_only=True)
+    award_image = serializers.CharField(label="图片地址")
     start_time = serializers.DateTimeField(format=TIME_FORMAT)
     end_time = serializers.DateTimeField(format=TIME_FORMAT)
     approval_state = serializers.IntegerField(default=0, required=False)
@@ -34,12 +34,11 @@ class AwardsRecordSerializers(serializers.Serializer):
     application_attachments = serializers.ListField(required=False)
     approval_state = serializers.IntegerField(default=0, required=False)
     application_time = serializers.DateTimeField(format=TIME_FORMAT, required=False)
-    award_info = serializers.SerializerMethodField()
+    award_name = serializers.SerializerMethodField()
 
     def create(self, validated_data):  # 调用Serializer必须重写create方法
         if self.initial_data["is_draft"]:
             validated_data["approval_state"] = RecordStatus["draft"]
-        approval_users = Awards.objects.filter(pk=validated_data["award_id"]).values_list("award_reviewers")
         # 对奖项表进行update_or_create，提供id则更新，否则创建
         record, result = AwardApplicationRecord.objects.update_or_create(
             id=validated_data["id"],
@@ -49,11 +48,10 @@ class AwardsRecordSerializers(serializers.Serializer):
                 "application_users": validated_data["application_users"],
                 "application_attachments": validated_data.get("application_attachments", []),
                 "approval_state": validated_data["approval_state"],
-                "application_time": timezone.now(),
-                "approval_users": approval_users[0][0]
+                "application_time": timezone.now()
             })
         return record
 
-    def get_award_info(self, row):
-        res = Awards.objects.filter(id=row.award_id).values().first()
-        return res if res else None
+    def get_award_name(self, row):
+        res = Awards.objects.get(id=row.award_id)
+        return res.award_name
