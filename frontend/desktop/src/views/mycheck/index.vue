@@ -60,6 +60,12 @@
                 </bk-table-column>
                 <bk-table-column label="申请时间" prop="application_time"></bk-table-column>
                 <bk-table-column label="申请理由" prop="application_reason"></bk-table-column>
+
+                <bk-table-column label="当前审批轮次">
+                    <template slot-scope="props">
+                        第 {{ props.row['approval_turn'] + 1 }} 轮
+                    </template>
+                </bk-table-column>
                 <bk-table-column label="申请附件">
                     <template slot-scope="props">
                         <bk-link v-for="file in props.row['application_attachments']"
@@ -72,20 +78,26 @@
                         </bk-link>
                     </template>
                 </bk-table-column>
-                <bk-table-column label="当前审批轮次">
+
+                <bk-table-column label="评审状态"
+                    :align="'center'"
+                    :header-align="'center'"
+                >
                     <template slot-scope="props">
-                        第 {{ props.row['approval_turn'] + 1 }} 轮
+                        <span :class="['status',props.row.approval_state_en]">
+                            {{ props.row.approval_state_cn }}
+                        </span>
                     </template>
                 </bk-table-column>
-
-                <bk-table-column label="审批状态"
+                <bk-table-column label="操作"
                     width="150"
                     fixed="right"
                 >
                     <template slot-scope="props">
                         <bk-button :class="['mr10',props.row['approval_state_en']]"
                             theme="primary"
-                            text
+                            v-show="props.row['approval_state'] === config['award_approval_state_controller']['review_pending']"
+                            :text="true"
                             @click="toCheck(props.row,
                                             config['button_controller_action']['pass'],
                                             '通过' + props.row['application_users_list'] + '的申请')"
@@ -94,13 +106,17 @@
                         </bk-button>
                         <bk-button :class="['mr10',props.row['approval_state_en']]"
                             theme="primary"
-                            text
+                            :text="true"
+                            v-show="props.row['approval_state'] === config['award_approval_state_controller']['review_pending']"
                             @click="toCheck(props.row,
                                             config['button_controller_action']['no_pass'],
                                             '退回' + props.row['application_users_list'] + '的申请')"
                         >
                             打回
                         </bk-button>
+                        <span class="text-gray" style="cursor:pointer;" v-show="props.row['approval_state'] !== config['award_approval_state_controller']['review_pending']">
+                            ------
+                        </span>
                     </template>
                 </bk-table-column>
             </bk-table>
@@ -127,7 +143,14 @@
 
 <script>
     import { getApproval, postApproval } from '@/api/service/apply-service'
-    import { AWARD_APPROVAL_STATE_EN_MAP, AWARD_APPROVAL_STATE_MAP, NOT_APPLY } from '@/constants'
+    import {
+        APPLY_APPROVAL_STATE_EN_MAP,
+        APPLY_APPROVAL_STATE_MAP,
+        REVIEW_PENDING,
+        REVIEW_PASSED,
+        REVIEW_NOT_PASSED
+
+    } from '@/constants'
     import moment from 'moment'
 
     export default {
@@ -146,11 +169,15 @@
                 },
                 config: {
                     award_approval_state_controller: {
-                        [NOT_APPLY]: '待审批'
+                        pass: REVIEW_PASSED,
+                        no_pass: REVIEW_NOT_PASSED,
+                        review_pending: REVIEW_PENDING
                     },
                     button_controller_action: {
-                        pass: 1,
-                        no_pass: 0
+                        pass: REVIEW_PASSED,
+                        no_pass: REVIEW_NOT_PASSED,
+                        review_pending: REVIEW_PENDING
+                      
                     }
                 },
                 approvalForm: {
@@ -171,8 +198,8 @@
                         ...item,
                         application_time: moment(item['application_time']).format('YYYY-MM-DD hh:mm:ss'),
                         application_users_list: Object.values(item['application_users'] ?? {}),
-                        approval_state_cn: AWARD_APPROVAL_STATE_MAP[item['approval_state']],
-                        approval_state_en: AWARD_APPROVAL_STATE_EN_MAP[item['approval_state']]
+                        approval_state_cn: APPLY_APPROVAL_STATE_MAP[item['approval_state']],
+                        approval_state_en: APPLY_APPROVAL_STATE_EN_MAP[item['approval_state']]
                     }
                 }) ?? []
             }

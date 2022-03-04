@@ -119,7 +119,7 @@ bus['routes'] = setBaseRoutes([
         }
     },
     {
-        path: 'award-manager/award-form',
+        path: 'award-form',
         name: 'award-form',
         component: AwardForm,
         meta: {

@@ -306,7 +306,6 @@
             toAddNewAward () {
                 this.$router.push({
                     name: 'award-form',
-                    path: `award-manager/award-form`,
                     query: {
                         type: 'new'
                     }
@@ -346,7 +345,6 @@
             toEditRow (rowData) {
                 return this.$router.push({
                     name: 'award-form',
-                    path: `award-manager/award-form`,
                     query: {
                         type: 'edit'
                     },
@@ -359,7 +357,6 @@
             toGetDetail (rowData) {
                 return this.$router.push({
                     name: 'award-form',
-                    path: `award-manager/award-form`,
                     query: {
                         type: 'detail'
                     },

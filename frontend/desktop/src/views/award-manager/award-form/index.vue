@@ -466,7 +466,6 @@
             toModify () {
                 return this.$router.push({
                     name: 'award-form',
-                    path: `award-manager/award-form`,
                     query: {
                         type: 'edit'
                     },

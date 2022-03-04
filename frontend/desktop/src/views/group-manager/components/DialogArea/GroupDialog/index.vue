@@ -42,6 +42,7 @@
                     <select-search
                         placeholder="请选择负责人"
                         :value.sync="secretaries"
+                        :id-key="'username'"
                     >
                     </select-search>
                 </bk-form-item>
@@ -129,7 +130,9 @@
                     return self.formData.secretaries.map(item => item.username)
                 },
                 set (newValue) {
+                    console.log(newValue)
                     this.formData.secretaries = this.$http.cache.get(GROUP_USERS_KEYNAME)?.filter(item => {
+                        console.log(newValue.includes(item['username']))
                         return newValue.includes(item['username'])
                     })
                 }

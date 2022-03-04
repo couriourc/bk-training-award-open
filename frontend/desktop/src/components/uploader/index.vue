@@ -42,7 +42,7 @@
             },
             url: {
                 type: String,
-                default: () => '/upload/'
+                default: () => 'upload/'
             }
         },
         data () {
