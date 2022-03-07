@@ -71,11 +71,11 @@
             return {
                 config: {
                     'editor': {
-                        'title': '编辑组',
+                        'title': '编辑组秘书信息',
                         'groupNameDisabled': true
                     },
                     'creator': {
-                        'title': '新增组'
+                        'title': '指派秘书'
                     }
                 },
                 visible: false,
@@ -92,11 +92,12 @@
                     name: [
                         { required: true, message: '请输入组织名', trigger: 'blur' }
                     ],
-                    level: [
-                        { required: true, message: '请选择奖项等级', trigger: 'blur' }
-                    ],
                     secretaries: [
-                        { required: true, message: '请选择奖项负责人', trigger: 'blur' }
+                        { required: true,
+                          message: '请选择奖项负责人',
+                          trigger: 'blur',
+                          type: Array
+                        }
                     ],
                     organisation: [
                         { required: true, message: '请输入组织名', trigger: 'blur' }
@@ -130,9 +131,7 @@
                     return self.formData.secretaries.map(item => item.username)
                 },
                 set (newValue) {
-                    console.log(newValue)
                     this.formData.secretaries = this.$http.cache.get(GROUP_USERS_KEYNAME)?.filter(item => {
-                        console.log(newValue.includes(item['username']))
                         return newValue.includes(item['username'])
                     })
                 }
