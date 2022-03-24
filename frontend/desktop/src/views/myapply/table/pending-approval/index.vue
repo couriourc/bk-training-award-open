@@ -22,13 +22,6 @@
                 >
                     详情
                 </bk-button>
-
-                <!--                <bk-button class="mr10 ml10"-->
-                <!--                    theme="primary"-->
-                <!--                    @click="handleGetDetail(application)"-->
-                <!--                    :text="true"-->
-                <!--                > 查看评审流程</bk-button>-->
-
                 <bk-popconfirm title="确认撤回该申请？"
                     content="撤回申请之后需要重新申请！"
                     trigger="click"
