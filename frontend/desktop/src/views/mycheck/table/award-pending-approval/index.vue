@@ -24,7 +24,7 @@
         DETAIL_APPROVAL_DETAIL,
         DETAIL_ROUTE_PATH,
         DETAIL_TYPE_KEYNAME,
-        MYAPPLY_PENDING_APPROVAL
+        MYAPPLY_PENDING_APPLY
     } from '@/constants'
     import { formatDate, formatUsernameAndDisplayName } from '@/common/util'
 
@@ -87,7 +87,7 @@
                     page,
                     size,
                     group_id: this.$bus.curGlobalGroupId,
-                    approval_status: MYAPPLY_PENDING_APPROVAL
+                    approval_status: MYAPPLY_PENDING_APPLY
                 }
                 return getAwardApproval(params).then(response => {
                     const approvals = response.data

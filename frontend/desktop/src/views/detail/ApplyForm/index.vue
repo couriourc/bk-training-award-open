@@ -87,7 +87,7 @@
         DETAIL_TYPE_KEYNAME,
         GROUP_USERS_KEYNAME,
         MYAPPLY_DRAFT_TAB_KEYNAME,
-        MYAPPLY_PENDING_APPROVAL_TAB_KEYNAME,
+        MYAPPLY_ING_APPLY_TAB_KEYNAME,
         MYAPPLY_ROUTE_PATH,
         MYAPPLY_ROUTER_KEYNAME
     } from '@/constants'
@@ -213,7 +213,7 @@
                     return this.$router.replace({
                         name: MYAPPLY_ROUTE_PATH,
                         query: {
-                            [MYAPPLY_ROUTER_KEYNAME]: MYAPPLY_PENDING_APPROVAL_TAB_KEYNAME
+                            [MYAPPLY_ROUTER_KEYNAME]: MYAPPLY_ING_APPLY_TAB_KEYNAME
                         }
                     })
                 })
