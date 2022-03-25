@@ -17,7 +17,7 @@ class ApplicationSerializer(serializers.Serializer):
             and self.context["username"] in obj.approval_users[obj.approval_turn]
         ):
             award_info = Awards.objects.filter(pk=obj.award_id).values().first()
-            if award_info.end_time > timezone.now():
+            if award_info["end_time"] > timezone.now():
                 return None
             obj = model_to_dict(obj)
             obj.update({"award_info": award_info if award_info else None})
