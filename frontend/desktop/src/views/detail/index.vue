@@ -191,11 +191,10 @@
             },
             async handlePostApproval ({ approvalTips, approvalText, action }) {
                 await this.$refs['approval-form'].validate()
-                const id = this.$route.query['record_id']
                 this.approvalForm.approvalLoading = true
                 return postApproval({
-                    id,
                     action,
+                    id: this.$route.query['record_id'],
                     approval_text: approvalText
                 }).then(_ => {
                     this.messageSuccess(approvalTips)

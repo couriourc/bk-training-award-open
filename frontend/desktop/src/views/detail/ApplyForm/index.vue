@@ -180,7 +180,7 @@
              * 初始化函数
              * */
             handleInit () {
-                this.config[this.$route.query[DETAIL_TYPE_KEYNAME]]?.init()
+                this.config[this.$route.query[DETAIL_TYPE_KEYNAME]]?.init?.()
             },
             handleSetDefaultInfo () {
               
