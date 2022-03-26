@@ -1,49 +1,85 @@
 <template>
-    <self-table :data="ingAwardData"
-        :loading="loading"
-        :pagination.sync="pagination"
-        @page-change="handleInit()"
-    >
-        <bk-table-column type="index" label="序号" :width="60"></bk-table-column>
-        <bk-table-column label="奖项名称">
-            <template slot-scope="ingAwards">
-                <span :title="ingAwards.row['award_name']" v-text="ingAwards.row['award_name']"></span>
-            </template>
-        </bk-table-column>
-        <bk-table-column label="奖项开始时间">
-            <template slot-scope="ingAwards">
-                <span :title="ingAwards.row['start_time']" v-text="ingAwards.row['start_time']"></span>
-            </template>
-        </bk-table-column>
-        <bk-table-column label="奖项截止时间">
-            <template slot-scope="ingAwards">
-                <span :title="ingAwards.row['end_time']" v-text="ingAwards.row['end_time']"></span>
-            </template>
-        </bk-table-column>
-        <bk-table-column label="奖项咨询人">
-            <template slot-scope="ingAwards">
-                <span :title="ingAwards.row['award_consultant_displayname_for_display']">{{ ingAwards.row['award_consultant_displayname_for_display'] }}</span>
-            </template>
-        </bk-table-column>
-        <!--        <bk-table-column label="操作">-->
-        <!--            <template slot-scope="endedApprovals">-->
-        <!--                <bk-button @click="handleToGetDetail(endedApprovals.row)" :text="true">查看详情</bk-button>-->
-        <!--            </template>-->
-        <!--        </bk-table-column>-->
-    </self-table>
+    <div>
+        <self-table :data="ingAwardData"
+            :loading="loading"
+            :pagination.sync="pagination"
+            @page-change="handleInit()"
+        >
+            <bk-table-column type="index" label="序号" :width="60"></bk-table-column>
+            <bk-table-column label="奖项名称">
+                <template slot-scope="ingAwards">
+                    <span :title="ingAwards.row['award_name']" v-text="ingAwards.row['award_name']"></span>
+                </template>
+            </bk-table-column>
+            <bk-table-column label="奖项开始时间">
+                <template slot-scope="ingAwards">
+                    <span :title="ingAwards.row['start_time']" v-text="ingAwards.row['start_time']"></span>
+                </template>
+            </bk-table-column>
+            <bk-table-column label="奖项截止时间">
+                <template slot-scope="ingAwards">
+                    <span :title="ingAwards.row['end_time']" v-text="ingAwards.row['end_time']"></span>
+                </template>
+            </bk-table-column>
+            <bk-table-column label="奖项咨询人">
+                <template slot-scope="ingAwards">
+                    <span :title="ingAwards.row['award_consultant_displayname_for_display']">{{
+                        ingAwards.row['award_consultant_displayname_for_display']
+                    }}</span>
+                </template>
+            </bk-table-column>
+        </self-table>
+        <slider-layout ref="application-detail"
+            :title="'测试奖项名'"
+            :width="650"
+        >
+            <div slot="content">
+                <self-table :data="ingAwardApplicationDetailData">
+                    <bk-table-column label="序号" type="index" :width="80"></bk-table-column>
+                    <bk-table-column label="评审结果">
+                        <template slot-scope="ingAwardApplication">
+                            <span :title="ingAwardApplication.row['']"
+                                v-text="ingAwardApplication.row['']"
+                            ></span>
+                        </template>
+                    </bk-table-column>
+                    <bk-table-column label="申请人">
+                        <template slot-scope="ingAwardApplication">
+                            <span :title="ingAwardApplication.row['']"
+                                v-text="ingAwardApplication.row['']"
+                            ></span>
+                        </template>
+                    </bk-table-column>
+                    <bk-table-column label="评语">
+                        <template slot-scope="ingAwardApplication">
+                            <span :title="ingAwardApplication.row['']"
+                                v-text="ingAwardApplication.row['']"
+                            ></span>
+                        </template>
+                    </bk-table-column>
+                </self-table>
+            </div>
+        </slider-layout>
+    </div>
 </template>
 
 <script>
     import { tableMixins } from '@/views/mycheck/table/tableMixins'
     import { getAwards } from '@/api/service/award-service'
     import { AWARD_FORM_ROUTE_PATH, AWARD_TYPE_DETAIL, AWARD_TYPE_ROUTE_KEY, ING_AWARD } from '@/constants'
+
     export default {
         name: 'ended-approval',
+        components: {
+            SliderLayout: () => import('@/views/award-manager/sidebar/slider-layout')
+        },
         mixins: [tableMixins],
         data () {
             return {
                 ingAwardRemoteData: [],
-                loading: false
+                ingAwardApplicationDetailRemoteData: [],
+                loading: false,
+                isShow: true
             }
         },
         computed: {
@@ -64,6 +100,11 @@
                         end_time: award['end_time'],
                         approval_state: award['approval_state']
                     }
+                }) ?? []
+            },
+            ingAwardApplicationDetailData () {
+                return this.ingAwardApplicationDetailRemoteData.map(application => {
+                    return {}
                 }) ?? []
             }
         },

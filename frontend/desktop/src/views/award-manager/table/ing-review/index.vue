@@ -10,16 +10,6 @@
                 <span :title="ingAwards.row['award_name']" v-text="ingAwards.row['award_name']"></span>
             </template>
         </bk-table-column>
-        <bk-table-column label="奖项开始时间">
-            <template slot-scope="ingAwards">
-                <span :title="ingAwards.row['start_time']" v-text="ingAwards.row['start_time']"></span>
-            </template>
-        </bk-table-column>
-        <bk-table-column label="奖项截止时间">
-            <template slot-scope="ingAwards">
-                <span :title="ingAwards.row['end_time']" v-text="ingAwards.row['end_time']"></span>
-            </template>
-        </bk-table-column>
         <bk-table-column label="奖项咨询人">
             <template slot-scope="ingAwards">
                 <span :title="ingAwards.row['award_consultant_displayname_for_display']">{{ ingAwards.row['award_consultant_displayname_for_display'] }}</span>
@@ -41,22 +31,20 @@
             </template>
         </bk-table-column>
         <bk-table-column label="操作">
-            <template slot-scope="endedApprovals">
-                <!--                <bk-button @click="handleToGetDetail(endedApprovals.row)" :text="true">查看详情</bk-button>-->
-              
-                <bk-popconfirm trigger="click"
-                    @confirm="handleToOverAward(endedApprovals.row)"
-                    width="280">
-                    <div slot="content">
-                        <i class="bk-icon icon-info-circle-shape pr5 content-icon" style="color: #cc3333;"></i>
-                        <span class="content-text">将会提前结束奖项,未评审的将置为未通过
-                        </span>
-                    </div>
-                    <bk-button theme="danger"
-                        class="mr20 ml20 "
-                        :text="true"
-                    >结束奖项</bk-button>
-                </bk-popconfirm>
+            <template slot-scope="ingReviewAwards">
+                <bk-button class="mr10"
+                    :text="true"
+                    @click="handleGetAwardApplications(ingReviewAwards.row)"
+                >
+                    查看申请详情
+                </bk-button>
+                <bk-button theme="danger"
+                    class="mr20 ml20 "
+                    :text="true"
+                    @click="toOverAwards(ingReviewAwards.row)"
+                >
+                    结束奖项
+                </bk-button>
             </template>
         </bk-table-column>
     </self-table>
@@ -136,8 +124,9 @@
                     this.handleInit()
                     this.messageSuccess('已成功终止奖项评审')
                 })
-            }
-
+            },
+            handleGetAwardApplications () {},
+            toOverAwards () {}
         }
 
     }

@@ -1,16 +1,57 @@
 <template>
-    <self-table :data="endedReviewData"
-        :loading="loading"
-        :pagination.sync="pagination"
-        @page-change="handleInit()"
-    >
-        <bk-table-column type="index" label="序号" width="60"></bk-table-column>
-        <bk-table-column label="奖项名称" prop="award_name"></bk-table-column>
-        <bk-table-column label="奖项开始时间" prop="start_time"></bk-table-column>
-        <bk-table-column label="奖项截止时间" prop="end_time"></bk-table-column>
-        <bk-table-column label="奖项咨询人" prop="award_consultant_displayname_for_display"></bk-table-column>
-
-    </self-table>
+    <div>
+        <self-table :data="endedReviewData"
+            :loading="loading"
+            :pagination.sync="pagination"
+            @page-change="handleInit()"
+        >
+            <bk-table-column type="index" label="序号" width="60"></bk-table-column>
+            <bk-table-column label="奖项名称" prop="award_name"></bk-table-column>
+            <bk-table-column label="奖项开始时间" prop="start_time"></bk-table-column>
+            <bk-table-column label="奖项截止时间" prop="end_time"></bk-table-column>
+            <bk-table-column label="奖项咨询人" prop="award_consultant_displayname_for_display"></bk-table-column>
+            <bk-table-column label="操作">
+                <template slot-scope="awards">
+                    <bk-button :text="true"
+                        @click="handleGetAwardApplications(awards.row)"
+                    >
+                        查看申请结果
+                    </bk-button>
+                </template>
+            </bk-table-column>
+        </self-table>
+        <slider-layout ref="application-detail"
+            :title="'测试奖项名'"
+            :width="650"
+        >
+            <div slot="content">
+                <self-table :data="awardApplicationDetailData">
+                    <bk-table-column label="序号" type="index" :width="80"></bk-table-column>
+                    <bk-table-column label="评审结果">
+                        <template slot-scope="ingAwardApplication">
+                            <span :title="ingAwardApplication.row['']"
+                                v-text="ingAwardApplication.row['']"
+                            ></span>
+                        </template>
+                    </bk-table-column>
+                    <bk-table-column label="申请人">
+                        <template slot-scope="ingAwardApplication">
+                            <span :title="ingAwardApplication.row['']"
+                                v-text="ingAwardApplication.row['']"
+                            ></span>
+                        </template>
+                    </bk-table-column>
+                    <bk-table-column label="评语">
+                        <template slot-scope="ingAwardApplication">
+                            <span :title="ingAwardApplication.row['']"
+                                v-text="ingAwardApplication.row['']"
+                            ></span>
+                        </template>
+                    </bk-table-column>
+                </self-table>
+            </div>
+        </slider-layout>
+    </div>
 </template>
 
 <script>
@@ -19,10 +60,15 @@
     import { getAwards } from '@/api/service/award-service'
     export default {
         name: 'ended-review',
+        components: {
+            SliderLayout: () => import('@/views/award-manager/sidebar/slider-layout')
+        },
         mixins: [tableMixins],
         data () {
             return {
                 endedReviewRemoteData: [],
+                awardApplicationDetailRemoteData: [],
+                RemoteData: [],
                 loading: false
             }
         },
@@ -44,6 +90,11 @@
                         end_time: award['end_time'],
                         approval_state: award['approval_state']
                     }
+                }) ?? []
+            },
+            awardApplicationDetailData (self) {
+                return self.awardApplicationDetailRemoteData?.map(application => {
+                    return application
                 }) ?? []
             }
         },
@@ -72,6 +123,13 @@
                 }).finally(_ => {
                     this.loading = false
                 })
+            },
+            handleGetAwardApplications () {
+                this.toShowAwardApplicationInfo()
+            },
+            toShowAwardApplicationInfo () {
+                // 只做一件事 打开
+                this.$refs['application-detail'].show()
             }
         }
 
