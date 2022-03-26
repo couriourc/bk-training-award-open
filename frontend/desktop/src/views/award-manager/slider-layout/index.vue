@@ -9,8 +9,10 @@
         <div slot="header">
             <slot v-if="!!$slots['header']" name="header"></slot>
             <span v-else
-                :title="$attrs['title']">
-                {{ $attrs['title'] }}
+                :title="$attrs['header-title']"
+                style="cursor:pointer;"
+            >
+                {{ $attrs['header-title'] }}
             </span>
         </div>
         <slot v-if="sliderShow" slot="content" name="content"></slot>
@@ -23,15 +25,15 @@
         name: 'slider-layout',
         data () {
             return {
-                sliderShow: true
+                sliderShow: false
             }
         },
         methods: {
             hidden () {
-                this.sliderShow = true
+                this.sliderShow = false
             },
             show () {
-                this.sliderShow = false
+                this.sliderShow = true
             }
         }
     }
