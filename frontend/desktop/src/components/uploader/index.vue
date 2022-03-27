@@ -46,6 +46,7 @@
                             const downloadElement = document.createElement('a')
                             downloadElement.style.display = 'none'
                             downloadElement.href = curFile['url']
+                            downloadElement.target = '_blank'
                             downloadElement.download = curFile['name'] // 下载后文件名
                             document.body.appendChild(downloadElement)
                             downloadElement.click() // 点击下载
