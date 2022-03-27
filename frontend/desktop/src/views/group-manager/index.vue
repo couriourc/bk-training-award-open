@@ -187,15 +187,10 @@
     import { tableMixins } from '@/common/mixins/tableMixins'
     import { deleteGroupManage, deleteGroupUser, getGroupUser, putGroupManage } from '@/api/service/group-service'
     import { APP_GROUP_DIALOG, GROUP_MANAGER_ROUTE_PATH } from '@/constants'
-    import SelectSearch from '@/components/select-search'
-    import Tabs from '@/components/Tabs'
+    import { formatUsernameAndDisplayName } from '@/common/util'
 
     export default {
         name: GROUP_MANAGER_ROUTE_PATH,
-        components: {
-            Tabs,
-            SelectSearch
-        },
         mixins: [tableMixins],
         data (self) {
             return {
@@ -267,13 +262,13 @@
                         phone: rawData['phone'],
                         user_id: rawData['user_id'],
                         username: rawData['username'],
-                        display_name_for_display: username + '(' + displayName + ')'
+                        display_name_for_display: formatUsernameAndDisplayName(username, displayName)
                     }
                 }) ?? []
-            },
-            inviteLink (self) {
-                return `${window.location.origin + window.location.pathname}/invite?group_id=${self.$bus.curGlobalGroupId}`
             }
+            // inviteLink (self) {
+            //     return `${window.location.origin + window.location.pathname}/invite?group_id=${self.$bus.curGlobalGroupId}`
+            // }
         },
         created () {
             this.handleInit()
