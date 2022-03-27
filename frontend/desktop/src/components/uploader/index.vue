@@ -64,9 +64,16 @@
                 files: []
             }
         },
+        watch: {
+            'attachFiles.length': {
+                handler (newValue) {
+                    if (!newValue) return
+                    this.$nextTick(this.hackUpload)
+                }
+            }
+        },
         mounted () {
             this.cookie = cookie.parse(document.cookie)['csrftoken']
-            this.$nextTick(this.hackUpload)
         },
         methods: {
             /**
@@ -76,7 +83,7 @@
                 const filePanel = this.$refs['file-panel'].$el
                 const attachFiles = this.attachFiles
                 filePanel.querySelectorAll('.file-item .file-icon').forEach((fileItem, index) => {
-                    fileItem.addEventListener('click', _ => {
+                    fileItem.onClick = () => {
                         const curFile = attachFiles[index]
                         if (!curFile) {
                             return
@@ -90,7 +97,7 @@
                         downloadElement.click() // 点击下载
                         document.body.removeChild(downloadElement) // 下载完成移除元素
                         window.URL.revokeObjectURL(curFile['url']) // 释放掉blob对象
-                    })
+                    }
                 })
             },
             handleUploadFileRes (response) {
