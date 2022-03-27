@@ -299,7 +299,7 @@
                     username,
                     group_id: this.$bus.curGlobalGroupId
                 }
-                this.tableDataIsLoading = true
+                this.loading = true
                 return deleteGroupManage(params).then(_ => {
                     this.handleInit()
                     this.messageSuccess('移除成功')
