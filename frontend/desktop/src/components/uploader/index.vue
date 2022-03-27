@@ -1,5 +1,6 @@
 <template>
     <bk-upload :theme="theme"
+        v-if="!($attrs['readonly'] && attachFiles.length < 1)"
         :files="attachFiles"
         :limit="limit"
         :tip="$attrs['tip']"
@@ -17,7 +18,6 @@
             disabled: $attrs['disabled'],
             readonly: $attrs['readonly']
         }"
-        v-if="!($attrs['readonly'] && attachFiles.length < 1)"
         :size="100"
         ref="file-panel"
     ></bk-upload>
@@ -28,7 +28,6 @@
 </template>
 <script>
     import cookie from 'cookie'
-    import { postUpload } from '@/api/service/common-service'
 
     export default {
         name: 'uploader',
@@ -67,7 +66,7 @@
         },
         mounted () {
             this.cookie = cookie.parse(document.cookie)['csrftoken']
-            this.hackUpload()
+            this.$nextTick(this.hackUpload)
         },
         methods: {
             /**
@@ -102,15 +101,6 @@
              * */
             handleUploadExceed (limit, currentFileLength) {
                 this.messageWarn(`限制选择${limit}个，当前已选择${currentFileLength}`)
-            },
-            handleUploder ({ fileObj }) {
-                const form = new FormData()
-                form.append('upload_file', fileObj.origin)
-                return postUpload(form).then(res => {
-                    this.handleUploadFileRes(res, fileObj)
-                }).catch(_ => {
-                    this.messageError('上传失败')
-                })
             },
             handleSuccess (file, fileList) {
                 const attachFileList = fileList.map(item => {
