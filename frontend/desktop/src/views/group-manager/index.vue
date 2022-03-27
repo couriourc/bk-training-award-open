@@ -114,7 +114,9 @@
         </div>
         <!--      操作区域-->
         <tabs>
-            <self-table :data="tableData" :loading="tableDataIsLoading">
+            <self-table :data="tableData"
+                :loading="loading"
+            >
                 <bk-table-column type="index"
                     label="序号"
                     :width="80"
@@ -287,6 +289,10 @@
                     ]
                 )
             },
+            /**
+             * @param target 需要移交的对象
+             * @return {any}
+             * */
             toRemoveUser (target) {
                 const { username } = target
                 const params = {
@@ -299,28 +305,9 @@
                     this.messageSuccess('移除成功')
                 })
             },
-            /**
-             * 页面改变发起请求
-             * */
-            handlePageChange (page) {
-                this.pagination.page = page
-                return this.handleGetPageData(page, this.pagination.limit)
-            },
-            /**
-             * 页面尺寸改变触发请求，需要把页面归为 1
-             * */
-            handlePageLimitChange (limit) {
-                this.pagination.page = 1
-                this.pagination.limit = limit
-                return this.handleGetPageData(this.pagination.page, limit)
-            },
-            /**
-             * @description 获取组信息
-             * @param {number} page
-             * @param {number} size
-             * */
-            handleGetPageData (page = this.pagination.page, size = this.pagination.limit) {
-                this.tableDataIsLoading = true
+            handleGetPageData () {
+                if (this.loading) return
+                this.loading = true
                 const curGlobalGroupId = this.$bus.curGlobalGroupId
                 const params = {
                     groupId: curGlobalGroupId
@@ -329,7 +316,7 @@
                 return getGroupUser(params).then(res => {
                     this.remoteData = res.data
                 }).finally(_ => {
-                    this.tableDataIsLoading = false
+                    this.loading = false
                 })
             },
             toJoinGroup () {
