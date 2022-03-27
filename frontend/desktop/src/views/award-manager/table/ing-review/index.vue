@@ -50,7 +50,7 @@
                         :text="true"
                         @click="toGetAwardApplicationDetail(ingReviewAwards.row,true)"
                     >
-                        查看申请详情
+                        申请详情
                     </bk-button>
                     <bk-button theme="danger"
                         class="mr20 ml20 "

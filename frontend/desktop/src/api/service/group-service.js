@@ -45,7 +45,8 @@ export function getGroupUser ({ groupId }) {
         }
     }, {
         clearCache: true,
-        cancelWhenRouteChange: true
+        cancelWhenRouteChange: true,
+        cancelPrevious: true
     })
 }
 

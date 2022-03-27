@@ -302,10 +302,7 @@
                             })
                         },
                         init () {
-                            const awardId = this.$route.query['award_id']
-                            if (awardId) {
-                                this.handleGetAwardDetailById(awardId)
-                            }
+                            self.handleGetAwardDetailById()
                             setTitle('编辑奖项')
                         }
                     },
@@ -319,10 +316,7 @@
                             this.$router.go(-1)
                         },
                         init () {
-                            const awardId = this.$route.query['award_id']
-                            if (awardId) {
-                                this.handleGetAwardDetailById(awardId)
-                            }
+                            self.handleGetAwardDetailById()
                             setTitle('奖项详情')
                         }
                     }
@@ -331,7 +325,7 @@
         },
         computed: {
             formType (self) {
-                return self.$route.query[AWARD_TYPE_ROUTE_KEY] || 'create'
+                return self.$route.query[AWARD_TYPE_ROUTE_KEY] || AWARD_TYPE_CREATE
             },
             groupInfo: {
                 get (self) {
@@ -373,7 +367,8 @@
             handleInit () {
                 this.config[this.formType]?.init()
             },
-            handleGetAwardDetailById (awardId) {
+            handleGetAwardDetailById () {
+                const awardId = this.$route.query['award_id']
                 if (awardId) {
                     return getAwardById(awardId).then(awardDetail => {
                         const detail = awardDetail.data
