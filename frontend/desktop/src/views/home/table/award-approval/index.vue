@@ -55,12 +55,14 @@
             awardApprovalList (self) {
                 return self.awardApprovalRemoteList?.map(approval => {
                     const awardInfo = approval['award_info']
+                    const applicationUser = approval['application_user']?.[0]
                     return {
                         approval_id: approval['id'],
                         award_id: approval['award_id'],
                         award_department_id: approval['award_department_id'],
                         application_time: formatDate(approval['application_time']),
                         application_reason: approval['application_reason'],
+                        application_user: formatUsernameAndDisplayName(applicationUser['username'], applicationUser['display_name']) || '未定义',
                         application_users: approval['application_users'],
                         application_attachments: approval['application_attachments'],
                         approval_time: approval['approval_status'],

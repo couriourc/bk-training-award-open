@@ -59,11 +59,12 @@
         computed: {
             endedApprovalData (self) {
                 const endedApprovalRemoteData = self.endedApprovalRemoteData
-                
+              
                 const list = endedApprovalRemoteData?.map(approval => {
                     const applicationInfo = approval['application_info']
                     const awardInfo = applicationInfo?.['award_info'] ?? {}
                     const applicationUsers = approval.application_users ?? []
+                    const applicationUser = applicationUsers[0]
                     return {
                         approval_id: approval['id'],
                         application_id: approval['application_id'],
@@ -71,7 +72,7 @@
                         award_department_id: approval['award_department_id'],
                         application_time: formatDate(applicationInfo['application_time']),
                         application_reason: approval['application_reason'],
-                        application_user: formatUsernameAndDisplayName(applicationUsers[0]?.['username'], applicationUsers[0]?.['display_name']),
+                        application_user: formatUsernameAndDisplayName(applicationUser?.['username'], applicationUser?.['display_name']),
                         application_users: approval['application_users'],
                         application_attachments: approval['application_attachments'],
                         approval_state: approval['approval_state'],
