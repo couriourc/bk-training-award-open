@@ -69,7 +69,7 @@
                     return {
                         approval_id: approval['id'],
                         application_id: approval['application_id'],
-                        award_id: awardInfo['award_id'],
+                        award_id: applicationInfo['award_id'],
                         award_department_id: approval['award_department_id'],
                         application_time: formatDate(applicationInfo['application_time']),
                         application_reason: applicationInfo['application_reason'] || '未填写申请理由',
