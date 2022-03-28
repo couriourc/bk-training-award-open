@@ -160,7 +160,7 @@
     </div>
 </template>
 <script>
-    import { formatDate, formatUsernameAndDisplayName, setTitle } from '@/common/util'
+    import { formatDate, setTitle } from '@/common/util'
     import {
         AWARD_LEVEL_MAP,
         AWARD_MANAGER_ROUTE_PATH, AWARD_TYPE_CREATE, AWARD_TYPE_DETAIL,
@@ -373,10 +373,7 @@
                     return getAwardById(awardId).then(awardDetail => {
                         const detail = awardDetail.data
                         try {
-                            detail['award_consultant_displayname'] = formatUsernameAndDisplayName(
-                                detail['award_consultant'],
-                                detail['award_consultant_displayname']
-                            )
+                            console.log(detail)
                             detail['reviewers'] = detail['reviewers'] = detail['award_reviewers'].map(item => {
                                 return {
                                     uuid: uuid.get(),
@@ -387,7 +384,9 @@
                         } catch (e) {
                             console.error(e)
                         }
-                        this.awardForm = detail
+                        this.$nextTick(item => {
+                            this.awardForm = detail
+                        })
                     })
                 }
             },
